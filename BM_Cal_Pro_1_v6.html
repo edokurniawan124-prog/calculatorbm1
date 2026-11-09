@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#102b46">
+<title>BM Cal Pro 1 | Kalkulator Analisa BM</title>
+<style>
+:root{--navy:#102b46;--blue:#1769aa;--cyan:#28b8c7;--bg:#f2f6fa;--ink:#172b3a;--muted:#6b7c8d;--line:#dce5ed;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:linear-gradient(125deg,#102b46,#1769aa);color:white;padding:28px 20px 58px}
+.head{max-width:980px;margin:auto}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:22px;font-weight:800;border:1px solid rgba(255,255,255,.24)}
+h1{font-size:clamp(23px,5vw,32px);margin:0;letter-spacing:.2px}
+header p{margin:6px 0 0;color:#d7e8f5;font-size:14px}
+main{max-width:980px;margin:-34px auto 40px;padding:0 16px}
+.panel{background:white;border:1px solid #e5edf3;border-radius:20px;box-shadow:0 12px 35px rgba(20,49,73,.09);overflow:hidden}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);padding:10px;gap:8px;background:#f9fbfd;border-bottom:1px solid var(--line)}
+.tab{border:0;background:transparent;border-radius:12px;padding:13px 8px;color:#607487;font-weight:700;font-size:14px;cursor:pointer;transition:.2s}
+.tab.active{background:var(--navy);color:white;box-shadow:0 4px 12px #102b462b}
+.content{padding:clamp(20px,5vw,34px)}
+.section-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:24px}
+h2{font-size:21px;margin:0 0 6px;color:var(--navy)}
+.sub{color:var(--muted);font-size:13px;margin:0;line-height:1.5}
+.tag{font-size:11px;font-weight:800;color:#16718b;background:#e7f8fa;padding:7px 10px;border-radius:99px;white-space:nowrap}
+.formula{background:#f1f7fb;border:1px solid #dfebf3;border-radius:12px;padding:13px 15px;margin-bottom:22px}
+.formula small{display:block;color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.formula strong{font-size:18px;color:var(--blue);letter-spacing:.3px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.field{display:flex;flex-direction:column;gap:7px}
+[hidden]{display:none!important}
+label{font-size:13px;font-weight:700;color:#344b5e}
+.hint{font-size:11px;color:#8493a0;font-weight:400}
+input,select{width:100%;border:1px solid #cfdae4;border-radius:11px;padding:13px 14px;font:inherit;font-size:15px;color:var(--ink);background:#fff;outline:none;transition:.2s}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1769aa1a}
+input[readonly]{background:#f4f7fa;color:#637486}
+.actions{display:flex;gap:10px;margin-top:23px;flex-wrap:wrap}
+button{font:inherit}
+.calculate{border:0;background:var(--blue);color:white;border-radius:11px;padding:13px 22px;font-weight:800;cursor:pointer;flex:1;min-width:160px}
+.calculate:hover{background:#10558e}
+.reset{border:1px solid #cfdae4;background:white;color:#536779;border-radius:11px;padding:13px 18px;font-weight:700;cursor:pointer}
+.result{margin-top:24px;border-radius:16px;padding:20px;background:linear-gradient(120deg,#102b46,#1769aa);color:white;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.result-label{font-size:12px;color:#c8deef;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.result-value{font-size:clamp(30px,7vw,42px);font-weight:850;letter-spacing:-1px;margin-top:5px;line-height:1.1}
+.result-unit{font-size:15px;color:#d7e8f5;font-weight:700}
+.result-note{font-size:11px;color:#c8deef;margin-top:8px}
+.result-icon{font-size:30px;opacity:.9}
+.note{margin-top:16px;color:#788896;font-size:11px;line-height:1.6}
+footer{text-align:center;color:#8a99a6;font-size:11px;padding:0 16px 25px}
+
+.history{margin-top:26px;border-top:1px solid var(--line);padding-top:22px}
+.history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.history-head h3{margin:0;color:var(--navy);font-size:17px}
+.history-empty{background:#f6f9fb;border:1px dashed #d5e0e8;border-radius:12px;padding:18px;text-align:center;color:#8493a0;font-size:13px}
+.history-list{display:flex;flex-direction:column;gap:9px}
+.history-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.history-name{font-size:13px;font-weight:800;color:var(--navy)}
+.history-meta{font-size:11px;color:#81909d;margin-top:4px;line-height:1.5}
+.history-value{font-size:16px;font-weight:850;color:var(--blue);text-align:right;white-space:nowrap}
+.history-value small{display:block;font-size:10px;color:#8493a0;font-weight:600}
+
+.history{margin-top:20px;padding-top:16px}
+.history-head{margin-bottom:8px}
+.history-head h3{font-size:15px}
+.history-list{gap:5px}
+.history-item{padding:7px 10px;border-radius:9px;gap:8px}
+.history-name{font-size:11px}
+.history-meta{font-size:9px;margin-top:2px;line-height:1.35}
+.history-value{font-size:13px}
+.history-value small{font-size:9px}
+.history-empty{padding:12px;font-size:11px}
+
+@media(max-width:560px){.tabs{gap:4px;padding:7px}.tab{font-size:12px;padding:12px 4px}.fields{grid-template-columns:1fr}.section-top{display:block}.tag{display:inline-block;margin-top:10px}.result{align-items:flex-start}.result-icon{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="head">
+  <div class="brand"><div class="logo">BM</div><div><h1>BM Cal Pro 1</h1><p>Kalkulator Analisa BM</p></div></div>
+</div></header>
+<main>
+<section class="panel">
+  <nav class="tabs" aria-label="Menu kalkulator">
+    <button class="tab active" data-tab="ac" type="button">AC UREA</button>
+    <button class="tab" data-tab="urea" type="button">PEWARNA UREA</button>
+    <button class="tab" data-tab="za" type="button">PEWARNA ZA+</button>
+    <button class="tab" data-tab="history" type="button">RIWAYAT</button>
+  </nav>
+  <div class="content" id="calculatorView">
+    <div class="section-top"><div><h2 id="calcTitle">AC UREA</h2><p class="sub" id="calcSub">Perhitungan kebutuhan anticaking untuk basis pupuk Urea.</p></div><span class="tag">HASIL OTOMATIS · µL</span></div>
+    <div class="formula"><small>Rumus perhitungan</small><strong>(A × B) ÷ C × 1.000</strong></div>
+    <div class="fields">
+      <div class="field" id="doseField"><label for="dose">A · Dosis Anticaking Urea <span class="hint">(gr/kg)</span></label><input id="dose" type="number" value="0.6" min="0" step="any"></div>
+      <div class="field"><label for="basis">B · Basis Pupuk <span class="hint">(gr)</span></label><input id="basis" type="number" value="250" min="0" step="any"></div>
+      <div class="field"><label for="density">C · Density <span class="hint">(gr/mL)</span></label><input id="density" type="number" inputmode="decimal" min="0" step="any" placeholder="Masukkan density"></div>
+      <div class="field" id="zaDoseField" hidden style="display:none"><label for="zaDose">Pilihan Dosis Pewarna ZA+ <span class="hint">(gr/kg)</span></label><select id="zaDose"><option value="1.1">1,1 gr/kg</option><option value="1.4">1,4 gr/kg</option></select></div>
+    </div>
+    <div class="actions"><button class="calculate" id="calcBtn" type="button">Hitung Sekarang</button><button class="reset" id="resetBtn" type="button">Reset</button></div>
+    <div class="result" aria-live="polite"><div><div class="result-label">Hasil Perhitungan</div><div class="result-value" id="resultValue">—</div><div class="result-unit">mikroliter (µL)</div><div class="result-note" id="resultNote">Masukkan density, lalu tekan Hitung Sekarang.</div></div><div class="result-icon">⚗️</div></div>
+    <p class="note">Catatan: Density harus diisi dalam gr/mL dan bernilai lebih dari 0. Hasil dihitung menggunakan rumus (A × B) ÷ C, kemudian dikonversi dari mL ke µL (× 1.000). Gunakan titik atau koma sebagai pemisah desimal.</p>
+  </div>
+  <div class="content" id="historyView" hidden>
+    <div class="section-top">
+      <div><h2>Riwayat Pemakaian</h2><p class="sub">Daftar seluruh perhitungan yang pernah disimpan dari tombol Hitung Sekarang.</p></div>
+      <span class="tag">TERSIMPAN DI BROWSER</span>
+    </div>
+    <div id="historyList" class="history-list"><div class="history-empty">Belum ada riwayat perhitungan.</div></div>
+  </div>
+</section>
+</main>
+<footer>BM Cal Pro 1 · Kalkulator Analisa BM</footer>
+<script>
+const configs={
+ ac:{title:"AC UREA",sub:"Perhitungan kebutuhan anticaking untuk basis pupuk Urea.",dose:.6,basis:250,label:"A · Dosis Anticaking Urea",doseUnit:"gr/kg"},
+ urea:{title:"PEWARNA UREA",sub:"Perhitungan kebutuhan pewarna untuk basis pupuk Urea.",dose:.82,basis:200,label:"A · Dosis Pewarna Urea",doseUnit:"gr/kg"},
+ za:{title:"PEWARNA ZA+",sub:"Perhitungan kebutuhan pewarna untuk basis pupuk ZA+.",dose:1.1,basis:200,label:"A · Dosis Pewarna ZA+",doseUnit:"gr/kg"}
+};
+let current="ac";
+const $=id=>document.getElementById(id);
+function setTab(key){
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===key));
+ if(key==="history"){
+   $("calculatorView").hidden=true;
+   $("historyView").hidden=false;
+   renderHistory();
+   return;
+ }
+ current=key;
+ $("calculatorView").hidden=false;
+ $("historyView").hidden=true;
+ const c=configs[key];
+ $("calcTitle").textContent=c.title;$("calcSub").textContent=c.sub;
+ $("doseField").hidden=key==="za";$("zaDoseField").hidden=key!=="za";$("zaDoseField").style.display=key==="za"?"flex":"none";
+ $("dose").value=c.dose;$("basis").value=c.basis;
+ $("dose").previousElementSibling.innerHTML=c.label+' <span class="hint">(gr/kg)</span>';
+ $("density").value="";$("resultValue").textContent="—";
+ $("resultNote").textContent="Masukkan density, lalu tekan Hitung Sekarang.";
+}
+function calculate(saveToHistory=false){
+ const c=configs[current];
+ const a=current==="za"?Number($("zaDose").value):Number($("dose").value);
+ const b=Number($("basis").value),d=Number($("density").value);
+ if(!Number.isFinite(a)||a<=0||!Number.isFinite(b)||b<=0||!Number.isFinite(d)||d<=0){
+   $("resultValue").textContent="Periksa input";
+   $("resultNote").textContent="Dosis, basis pupuk, dan density harus berupa angka lebih dari 0.";
+   return;
+ }
+ const microliter=(a*b/d)*1000;
+ $("resultValue").textContent=microliter.toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2});
+ $("resultNote").textContent=`A = ${a} gr/kg  ·  B = ${b} gr  ·  C = ${d} gr/mL`;
+ if(saveToHistory){saveHistory({name:c.title,a,b,c:d,result:microliter,time:new Date().toLocaleString("id-ID")});}
+}
+const HISTORY_KEY="bmCalPro1History";
+function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){return []}}
+function saveHistory(item){
+ const items=getHistory();items.unshift(item);
+ try{localStorage.setItem(HISTORY_KEY,JSON.stringify(items))}catch(e){alert("Penyimpanan browser penuh. Sebagian riwayat baru mungkin tidak dapat disimpan.");}
+ renderHistory();
+}
+function renderHistory(){
+ const items=getHistory(),box=$("historyList");
+ if(!items.length){box.innerHTML='<div class="history-empty">Belum ada riwayat perhitungan.</div>';return;}
+ box.innerHTML=items.map(item=>`<div class="history-item"><div><div class="history-name">${item.name}</div><div class="history-meta">${item.time}<br>A: ${item.a} gr/kg · B: ${item.b} gr · C: ${item.c} gr/mL</div></div><div class="history-value">${Number(item.result).toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2})}<small>µL</small></div></div>`).join("");
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+$("calcBtn").addEventListener("click",()=>calculate(true));
+$("resetBtn").addEventListener("click",()=>setTab(current));
+["dose","basis","density","zaDose"].forEach(id=>$(id).addEventListener("input",()=>{if($("density").value)calculate(false);}));
+setTab("ac");renderHistory();
+</script>
+</body>
+</html>
